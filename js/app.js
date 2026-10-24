@@ -817,6 +817,7 @@ function enterFull() {
 }
 
 function leaveFull() {
+  $('webvol').hidden = true;
   if (playCtx?.kind === 'vod') {
     const { back } = playCtx;
     const item = playing;
@@ -1195,6 +1196,40 @@ function vctlAct(act) {
   else if (act === 'tracks') openTracks();
 }
 
+// Volume pill: web version only. On the TV the remote and the TV itself control the volume.
+const IS_TV = /web0s|webos/i.test(navigator.userAgent);
+let volTimer;
+
+function showVolume() {
+  if (IS_TV || view !== 'full') return;
+  const v = video.muted ? 0 : Math.round(video.volume * 100);
+  $('webvol-val').textContent = `${v}%`;
+  $('webvol-mute').textContent = v === 0 ? '🔇' : '🔊';
+  $('webvol').hidden = false;
+  clearTimeout(volTimer);
+  volTimer = setTimeout(() => ($('webvol').hidden = true), 3500);
+}
+
+function changeVolume(delta) {
+  video.muted = false;
+  video.volume = Math.min(1, Math.max(0, Math.round((video.volume + delta) * 10) / 10));
+  showVolume();
+}
+
+$('webvol').addEventListener('click', (e) => {
+  e.stopPropagation();                 // a click here must not leave the full-screen player
+  const act = e.target.closest('button')?.dataset.act;
+  if (act === 'vold') changeVolume(-0.1);
+  else if (act === 'volu') changeVolume(0.1);
+  else if (act === 'mute') { video.muted = !video.muted; showVolume(); }
+});
+document.addEventListener('keydown', (e) => {
+  if (IS_TV || view !== 'full') return;
+  if (e.key === '+' || e.key === '=') changeVolume(0.1);
+  else if (e.key === '-') changeVolume(-0.1);
+  else if (e.key === 'm' || e.key === 'M') { video.muted = !video.muted; showVolume(); }
+});
+
 function listButton(row, btn) {
   const idx = rowButtons(row).indexOf(btn);
   if (btn.dataset.act === 'del') {
@@ -1219,6 +1254,7 @@ function containerView(el) {
 }
 
 document.addEventListener('mousemove', (e) => {
+  if (view === 'full') showVolume();
   if (view === 'full' && playCtx?.kind === 'vod') showBar();
   const el = e.target.closest ? e.target.closest('.item') : null;
   if (!el || el.tagName === 'INPUT') return;
