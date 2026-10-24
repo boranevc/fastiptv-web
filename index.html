@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FAST IPTV</title>
+  <link rel="icon" href="assets/favicon.png">
+  <meta name="viewport" content="width=1920, height=1080">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="assets/hls.min.js"></script>
+</head>
+<body>
+  <div id="stage">
+  <video id="video" autoplay playsinline></video>
+  <div id="spin" hidden></div>
+
+  <header id="topbar" hidden>
+    <div class="brand">
+      <img class="mark" src="assets/mark.png" alt="">
+      <span class="brand-name">FAST</span><span class="brand-tag">IPTV</span>
+      <span class="brand-ed">ULTRA TV<br>EDITION</span>
+      <span id="crumb" class="crumb" hidden></span>
+    </div>
+    <div class="status">
+      <div id="pill" class="pill" hidden>
+        <i class="dot"></i>
+        <span><span data-i18n="pill.active"></span> <b id="pill-name"></b></span>
+        <span class="sep" id="pill-sep1"></span>
+        <span id="pill-expwrap"><span data-i18n="pill.expires"></span> <b class="exp" id="pill-exp"></b></span>
+        <span class="sep" id="pill-sep2"></span>
+        <span id="pill-conn"></span>
+      </div>
+      <div class="clock"><b id="clock-time">--:--</b><small id="clock-date"></small></div>
+    </div>
+  </header>
+
+  <section id="login" class="screen">
+    <div class="card split">
+      <div class="side">
+        <img class="hero" src="assets/logo.png" alt="FAST IPTV">
+        <p class="tagline" data-i18n="login.tagline"></p>
+      </div>
+      <div class="main">
+        <h1 data-i18n="login.title"></h1>
+        <p class="sub" data-i18n="login.sub"></p>
+        <div class="tabs">
+          <button class="item tab active" data-mode="m3u">M3U URL</button>
+          <button class="item tab" data-mode="xtream">Xtream Codes API</button>
+        </div>
+        <label class="field"><span data-i18n="login.name"></span>
+          <input class="item name" id="pl-name" type="text" data-i18n-placeholder="login.namePh" autocomplete="off"></label>
+        <form id="form-m3u" class="form">
+          <label class="field"><span>M3U URL</span>
+            <input class="item" id="m3u-url" type="text" placeholder="http://..." autocomplete="off"></label>
+          <button class="item primary" type="submit" data-i18n-html="login.submit"></button>
+        </form>
+        <form id="form-xtream" class="form" hidden>
+          <label class="field"><span data-i18n="login.server"></span>
+            <input class="item" id="xt-server" type="text" placeholder="http://host:8080" autocomplete="off"></label>
+          <div class="two">
+            <label class="field"><span data-i18n="login.user"></span>
+              <input class="item" id="xt-user" type="text" data-i18n-placeholder="login.userPh" autocomplete="off"></label>
+            <label class="field"><span data-i18n="login.pass"></span>
+              <input class="item" id="xt-pass" type="password" placeholder="••••••••" autocomplete="off"></label>
+          </div>
+          <button class="item primary" type="submit" data-i18n-html="login.submit"></button>
+        </form>
+        <p id="login-msg" class="msg"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="lists" class="screen" hidden>
+    <div class="card split">
+      <div class="side">
+        <img class="hero" src="assets/logo.png" alt="FAST IPTV">
+        <p class="tagline" data-i18n="login.tagline"></p>
+      </div>
+      <div class="main">
+        <div class="mhead"><h1 data-i18n="lists.title"></h1><span id="lists-total" class="total"></span></div>
+        <p class="sub" data-i18n="lists.sub"></p>
+        <div id="lists-items" class="scroller"></div>
+        <p id="lists-msg" class="msg"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="home" class="screen" hidden>
+    <h1 class="home-title" data-i18n="home.title"></h1>
+    <p class="home-sub" data-i18n="home.sub"></p>
+    <div id="home-tiles">
+      <button class="item tile" data-section="live">
+        <span class="tbadge live"><i></i><span data-i18n="badge.live"></span></span><span class="tsel" data-i18n="tile.selected"></span>
+        <span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="7" y="19" width="50" height="35" rx="9"/><path d="M23 9l9 9 9-9"/><path class="f" d="M28 29.5v14l12-7z"/></svg></span><b data-i18n="tile.live"></b><small data-i18n="tile.liveSub"></small>
+        <span class="tfoot"><em id="cnt-live">—</em><span id="tag-live" class="ttag"></span></span>
+      </button>
+      <button class="item tile" data-section="movies">
+        <span class="tsel" data-i18n="tile.selected"></span>
+        <span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="26" width="48" height="28" rx="7"/><path d="M9 25l-1.5-9a3 3 0 012.4-3.5l41-7.2a3 3 0 013.5 2.4L56 19.5z"/><path d="M21 15.5l5 9M33 13.3l5 9M45 11l5 9"/><path class="f" d="M28 33v13l11-6.5z"/></svg></span><b data-i18n="tile.movies"></b><small data-i18n="tile.moviesSub"></small>
+        <span class="tfoot"><em id="cnt-movies">—</em><span class="ttag"></span></span>
+      </button>
+      <button class="item tile" data-section="series">
+        <span class="tsel" data-i18n="tile.selected"></span>
+        <span class="ico"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="25" width="46" height="31" rx="8"/><path d="M16 17h32M23 9h18"/><path class="f" d="M28.500 33v15l12.500-7.500z"/></svg></span><b data-i18n="tile.series"></b><small data-i18n="tile.seriesSub"></small>
+        <span class="tfoot"><em id="cnt-series">—</em><span class="ttag"></span></span>
+      </button>
+      <button class="item tile" data-section="lists">
+        <span class="tbadge ok" id="badge-lists"></span><span class="tsel" data-i18n="tile.selected"></span>
+        <span class="ico lists"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 18h30M10 32h30M10 46h19"/><path class="f" d="M43 36.500v15l13-7.500z"/></svg></span><b data-i18n="tile.lists"></b><small data-i18n="tile.listsSub"></small>
+        <span class="tfoot"><em id="cnt-lists"></em><span class="ttag" data-i18n="tile.change"></span></span>
+      </button>
+    </div>
+    <div id="recent-wrap" hidden>
+      <p class="rhead" data-i18n="recent.head"></p>
+      <div id="home-recent"></div>
+    </div>
+    <p id="home-msg" class="msg center"></p>
+  </section>
+
+  <section id="browser" class="screen" hidden>
+    <div class="col cats" id="col-cats"></div>
+    <div class="col" id="col-chans">
+      <input class="item" id="search" type="search" data-i18n-placeholder="search.ph" autocomplete="off" hidden>
+      <div class="chlist" id="chan-list"></div>
+      <p id="search-empty" class="empty-note" data-i18n="search.empty" hidden></p>
+    </div>
+  </section>
+
+  <section id="series" class="screen" hidden>
+    <div class="col cats" id="col-seasons"></div>
+    <div class="col chlist" id="col-eps"></div>
+  </section>
+
+  <div id="info" hidden></div>
+
+  <footer id="dock" hidden></footer>
+
+  <div id="vbar" hidden>
+    <div class="vhead"><span id="vtitle"></span><span id="vstate" class="chip"></span></div>
+    <div class="vrow">
+      <span id="vcur">0:00</span>
+      <div class="vtrack"><i id="vfill"></i><b id="vpin"></b></div>
+      <span id="vdur">0:00</span>
+    </div>
+    <div id="vctl" class="vctl">
+      <button class="item vbtn" data-act="prev" data-i18n="player.prev"></button>
+      <button class="item vbtn" data-act="back" data-i18n="player.back10"></button>
+      <button class="item vbtn main" data-act="toggle" id="vtoggle" data-i18n="player.pause"></button>
+      <button class="item vbtn" data-act="fwd" data-i18n="player.fwd10"></button>
+      <button class="item vbtn" data-act="next" data-i18n="player.next"></button>
+      <button class="item vbtn" data-act="tracks" data-i18n="player.tracks"></button>
+    </div>
+    <p id="vsub" class="vsub"></p>
+    <p class="keys" data-i18n-html="player.keys"></p>
+  </div>
+
+  <div id="tracks" hidden>
+    <div class="tcol"><h3 data-i18n="tracks.audio"></h3><div id="tracks-audio"></div></div>
+    <div class="tcol"><h3 data-i18n="tracks.subs"></h3><div id="tracks-sub"></div></div>
+    <p class="keys" data-i18n-html="tracks.keys"></p>
+  </div>
+
+  <div id="osd" hidden></div>
+  <div id="toast" hidden></div>
+  <div id="splash"><img src="assets/logo.png" alt=""><div class="load"><i></i></div></div>
+
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
